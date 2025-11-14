@@ -187,21 +187,21 @@ class ReceiptTemplateService extends GetxService {
       for (final product in data.products!) {
         String itemContent = loopContent;
 
-        // 固定宽度对齐：商品名(20字符) 单价(8字符) 数量(4字符) 价格(8字符)
-        final name = _padString(product.name, 20);
+        // 优化列宽：商品名(16字符) 单价(6字符) 数量(3字符) 价格(6字符)
+        final name = _padString(product.name, 16);
         final unitPrice = _padString(
           _formatAmount(product.unitPrice, withSymbol: false),
-          8,
+          6,
           alignRight: true,
         );
         final quantity = _padString(
           product.quantity.toString(),
-          4,
+          3,
           alignRight: true,
         );
         final totalPrice = _padString(
           _formatAmount(product.totalPrice, withSymbol: false),
-          8,
+          6,
           alignRight: true,
         );
 
@@ -355,10 +355,10 @@ class ReceiptTemplateService extends GetxService {
 [left]存币单号：{{storageId}}[/left]
 [left]============================[/left]
 [left]{{storeName}}[/left]
-[left]商品                  单价  数量  价格[/left]
+[left]商品          单价 数量 价格[/left]
 [left]----------------------------[/left]
 {{#products}}
-[left]{{name}}  {{unitPrice}}  {{quantity}}  {{totalPrice}}[/left]
+[left]{{name}} {{unitPrice}} {{quantity}} {{totalPrice}}[/left]
 {{/products}}
 [left]----------------------------[/left]
 [left]小计：{{subtotal}}[/left]
@@ -390,10 +390,10 @@ class ReceiptTemplateService extends GetxService {
 [left]存币单号：{{storageId}}[/left]
 [left]============================[/left]
 [left]{{storeName}}[/left]
-[left]商品                  单价  数量  价格[/left]
+[left]商品          单价 数量 价格[/left]
 [left]----------------------------[/left]
 {{#products}}
-[left]{{name}}  {{unitPrice}}  {{quantity}}  {{totalPrice}}[/left]
+[left]{{name}} {{unitPrice}} {{quantity}} {{totalPrice}}[/left]
 {{/products}}
 [left]----------------------------[/left]
 [left]小计：{{subtotal}}[/left]

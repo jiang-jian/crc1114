@@ -265,24 +265,20 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
           color: _lightBg1,
           borderRadius: BorderRadius.circular(10.r),
         ),
-        child: Wrap(
-          spacing: 0,
-          runSpacing: 4.h,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: ReceiptTemplateType.values.map((type) {
             final isSelected = _selectedType.value == type;
-            final isDisabled = type != ReceiptTemplateType.custody;
 
             return GestureDetector(
-              onTap: isDisabled
-                  ? null
-                  : () async {
-                      if (_hasUnsavedChanges.value) {
-                        final shouldSwitch = await _showUnsavedChangesDialog();
-                        if (shouldSwitch != true) return;
-                      }
-                      _selectedType.value = type;
-                      await _loadTemplate();
-                    },
+              onTap: () async {
+                if (_hasUnsavedChanges.value) {
+                  final shouldSwitch = await _showUnsavedChangesDialog();
+                  if (shouldSwitch != true) return;
+                }
+                _selectedType.value = type;
+                await _loadTemplate();
+              },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                 margin: EdgeInsets.only(right: 6.w),
@@ -292,42 +288,15 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
                     AppTheme.borderRadiusDefault,
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Text(
-                      type.displayName,
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.normal,
-                        color: isDisabled
-                            ? _textDisabled
-                            : isSelected
-                            ? _textPrimary
-                            : _textSecondary,
-                      ),
-                    ),
-                    if (isDisabled) ...[
-                      SizedBox(width: 6.w),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6.w,
-                          vertical: 2.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _borderColor,
-                          borderRadius: BorderRadius.circular(
-                            AppTheme.borderRadiusSmall,
-                          ),
-                        ),
-                        child: Text(
-                          '待开发',
-                          style: TextStyle(fontSize: 11.sp, color: _textLight),
-                        ),
-                      ),
-                    ],
-                  ],
+                child: Text(
+                  type.displayName,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                    color: isSelected ? _textPrimary : _textSecondary,
+                  ),
                 ),
               ),
             );
