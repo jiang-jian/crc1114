@@ -260,10 +260,17 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
   Widget _buildTypeSelector() {
     return Obx(
       () => Container(
-        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: _lightBg1,
-          borderRadius: BorderRadius.circular(10.r),
+          color: const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -279,23 +286,42 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
                 _selectedType.value = type;
                 await _loadTemplate();
               },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                margin: EdgeInsets.only(right: 6.w),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                margin: EdgeInsets.only(right: 4.w),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(
-                    AppTheme.borderRadiusDefault,
-                  ),
+                  gradient: isSelected
+                      ? LinearGradient(
+                          colors: [
+                            AppTheme.primaryColor,
+                            AppTheme.primaryColor.withOpacity(0.9),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null,
+                  color: isSelected ? null : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10.r),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppTheme.primaryColor.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ]
+                      : null,
                 ),
                 child: Text(
                   type.displayName,
                   style: TextStyle(
                     fontSize: 15.sp,
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.normal,
-                    color: isSelected ? _textPrimary : _textSecondary,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected ? Colors.white : _textSecondary,
+                    letterSpacing: 0.3,
                   ),
                 ),
               ),
@@ -308,25 +334,54 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
 
   Widget _buildPlaceholderGuide() {
     return Container(
-      padding: EdgeInsets.all(AppTheme.spacingDefault),
+      padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: _highlightBg,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusLarge),
-        border: Border.all(color: _highlightBorder, width: 1),
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFFFFF8E1),
+            const Color(0xFFFFECB3).withOpacity(0.5),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: const Color(0xFFFFD54F).withOpacity(0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF9800).withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, size: 20.sp, color: _infoColor),
-              SizedBox(width: _spacingS.w),
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: _infoColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.info_outline,
+                  size: 20.sp,
+                  color: _infoColor,
+                ),
+              ),
+              SizedBox(width: 12.w),
               Text(
                 '可用占位符说明',
                 style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w700,
                   color: _infoColor,
+                  letterSpacing: 0.5,
                 ),
               ),
             ],
@@ -522,28 +577,57 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
         _hasUnsavedChanges.value = true;
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
-          border: Border.all(color: _highlightBorder),
+          gradient: LinearGradient(
+            colors: [
+              Colors.white,
+              const Color(0xFFFAFAFA),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(
+            color: const Color(0xFFFFD54F).withOpacity(0.4),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF9800).withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              placeholder,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontFamily: 'monospace',
-                color: _codeColor,
-                fontWeight: FontWeight.w600,
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+              decoration: BoxDecoration(
+                color: _codeColor.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+              child: Text(
+                placeholder,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontFamily: 'monospace',
+                  color: _codeColor,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.3,
+                ),
               ),
             ),
-            SizedBox(width: 6.w),
+            SizedBox(width: 8.w),
             Text(
               description,
-              style: TextStyle(fontSize: 12.sp, color: _textSecondary),
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: _textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
@@ -555,8 +639,18 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusLarge),
-        border: Border.all(color: _borderColor),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: _borderColor.withOpacity(0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextField(
         controller: _contentController,
@@ -567,12 +661,16 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
           fontFamily: 'monospace',
           height: 1.6,
           color: _textPrimary,
+          letterSpacing: 0.3,
         ),
         decoration: InputDecoration(
           hintText: '请输入小票模板内容...支持使用占位符',
-          hintStyle: TextStyle(fontSize: 14.sp, color: _textDisabled),
+          hintStyle: TextStyle(
+            fontSize: 14.sp,
+            color: _textDisabled.withOpacity(0.6),
+          ),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.all(AppTheme.spacingL),
+          contentPadding: EdgeInsets.all(20.w),
         ),
         onChanged: (value) {
           _hasUnsavedChanges.value = true;
@@ -611,7 +709,7 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
         ),
         // 重置按钮
         SizedBox(
-          height: 44.h,
+          height: 48.h,
           child: OutlinedButton.icon(
             onPressed: () async {
               final shouldReset = await _showResetConfirmDialog();
@@ -619,38 +717,69 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
                 await _loadTemplate();
               }
             },
-            icon: Icon(Icons.refresh, size: 18.sp),
-            label: Text('重置', style: TextStyle(fontSize: 15.sp)),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: _textSecondary,
-              side: BorderSide(color: _borderColor),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  AppTheme.borderRadiusDefault,
-                ),
+            icon: Icon(Icons.refresh, size: 20.sp),
+            label: Text(
+              '重置',
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
               ),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF5C6BC0),
+              side: BorderSide(
+                color: const Color(0xFF5C6BC0).withOpacity(0.3),
+                width: 1.5,
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              elevation: 0,
             ),
           ),
         ),
         // 保存按钮
         Obx(
           () => SizedBox(
-            height: 44.h,
+            height: 48.h,
             child: ElevatedButton.icon(
               onPressed: _isSaving.value ? null : _saveTemplate,
               icon: _isSaving.value
                   ? SizedBox(
-                      width: 18.w,
-                      height: 18.h,
+                      width: 20.w,
+                      height: 20.h,
                       child: const CircularProgressIndicator(
                         strokeWidth: 2.5,
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : Icon(Icons.save, size: 18.sp),
+                  : Icon(Icons.save_outlined, size: 20.sp),
               label: Text(
                 _isSaving.value ? '保存中...' : '保存模板',
-                style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 12.h),
+                elevation: 0,
+                shadowColor: AppTheme.primaryColor.withOpacity(0.4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ).copyWith(
+                elevation: MaterialStateProperty.resolveWith<double>(
+                  (states) {
+                    if (states.contains(MaterialState.pressed)) return 8;
+                    if (states.contains(MaterialState.hovered)) return 4;
+                    return 2;
+                  },
+                ),
               ),
             ),
           ),
@@ -661,21 +790,44 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
 
   Widget _buildPreviewSection() {
     return Container(
-      padding: EdgeInsets.all(AppTheme.spacingL),
+      padding: EdgeInsets.all(20.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            '预览效果',
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-              color: _textPrimary,
-            ),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppTheme.primaryColor.withOpacity(0.1),
+                      AppTheme.primaryColor.withOpacity(0.05),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.preview_outlined,
+                  size: 24.sp,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                '预览效果',
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w700,
+                  color: _textPrimary,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 20.h),
           Expanded(child: _buildPreviewContent()),
-          SizedBox(height: 16.h),
+          SizedBox(height: 20.h),
           _buildTestPrintButton(),
         ],
       ),
@@ -684,11 +836,21 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
 
   Widget _buildPreviewContent() {
     return Container(
-      padding: EdgeInsets.all(AppTheme.spacingDefault),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadiusLarge),
-        border: Border.all(color: _borderColor),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: _borderColor.withOpacity(0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: SingleChildScrollView(
         child: Obx(() {
@@ -743,22 +905,45 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
   Widget _buildTestPrintButton() {
     return Obx(
       () => SizedBox(
-        height: 48.h,
+        height: 52.h,
+        width: double.infinity,
         child: ElevatedButton.icon(
           onPressed: _isPrinting.value ? null : _testPrint,
           icon: _isPrinting.value
               ? SizedBox(
-                  width: 20.w,
-                  height: 20.h,
+                  width: 22.w,
+                  height: 22.h,
                   child: const CircularProgressIndicator(
                     strokeWidth: 2.5,
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 )
-              : Icon(Icons.print, size: 20.sp),
+              : Icon(Icons.print_outlined, size: 22.sp),
           label: Text(
             _isPrinting.value ? '打印中...' : '测试打印',
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.8,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF4CAF50),
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
+            elevation: 0,
+            shadowColor: const Color(0xFF4CAF50).withOpacity(0.4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+          ).copyWith(
+            elevation: MaterialStateProperty.resolveWith<double>(
+              (states) {
+                if (states.contains(MaterialState.pressed)) return 8;
+                if (states.contains(MaterialState.hovered)) return 4;
+                return 2;
+              },
+            ),
           ),
         ),
       ),
