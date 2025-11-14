@@ -351,40 +351,33 @@ class ReceiptTemplateService extends GetxService {
   /// 默认支付小票模板
   String _getDefaultPaymentTemplate() {
     return '''
-[center]<xl>**HOLOX超乐场**</xl>[/center]
-[center]订单号：{{storageId}}[/center]
-[center]{{storeName}}[/center]
-[center]============================[/center]
-
-[left]<small>商品                  单价  数量  价格</small>[/left]
+[center]<xl>**HOLOX超乐城**</xl>[/center]
+[left]存币单号：{{storageId}}[/left]
+[left]============================[/left]
+[left]{{storeName}}[/left]
+[left]商品                  单价  数量  价格[/left]
 [left]----------------------------[/left]
 {{#products}}
-[left]<small>{{name}}{{unitPrice}}{{quantity}}{{totalPrice}}</small>[/left]
+[left]{{name}}  {{unitPrice}}  {{quantity}}  {{totalPrice}}[/left]
 {{/products}}
 [left]----------------------------[/left]
-
-[left]小计：                 {{subtotal}}[/left]
-[left]优惠：                -{{discount}}[/left]
-[left]**应付：**           <large>**{{totalAmount}}**</large>[/left]
-[left]实付：                 {{paidAmount}}[/left]
-[left]找零：                 {{changeAmount}}[/left]
-
+[left]小计：{{subtotal}}[/left]
+[left]优惠金额：-{{discount}}[/left]
+[left]应收金额：{{totalAmount}}[/left]
+[left]实收金额：{{paidAmount}}[/left]
+[left]找零金额：{{changeAmount}}[/left]
 [left]============================[/left]
 [left]打印时间：{{printTime}}[/left]
-[left]收银员：{{operatorName}}[/left]
-[left]门店电话：{{telephone}}[/left]
+[left]操作员：{{operatorName}}[/left]
 [left]地址：{{storeAddress}}[/left]
-
+[left]电话：{{telephone}}[/left]
 [left]----------------------------[/left]
-[left]<small>请当面清点商品和找零</small>[/left]
-[left]<small>非质量问题不退换</small>[/left]
-[left]<small>30天内凭小票可换货</small>[/left]
-[left]<small>7日内可开具发票（扫下方二维码）</small>[/left]
-
+[left]请当面点清所有商品及找零[/left]
+[left]如有质量问题请在30天内凭小票换货[/left]
 [center]============================[/center]
-[center]**发票二维码**[/center]
-[center]<small>{{qrcodeData}}</small>[/center]
-
+[center]开发票请扫描下方二维码[/center]
+[center]7天内有效[/center]
+[center]{{qrcodeData}}[/center]
 [center]============================[/center]
 [center]**谢谢惠顾！欢迎下次光临！**[/center]
 ''';
