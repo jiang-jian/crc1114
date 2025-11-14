@@ -386,33 +386,31 @@ class ReceiptTemplateService extends GetxService {
   /// 默认兑换小票模板
   String _getDefaultExchangeTemplate() {
     return '''
-[center]<xl>**HOLOX超乐场**</xl>[/center]
-[center]<large>***兑换小票***</large>[/center]
-[center]===[/center]
-
-[left]**兑换单号：**{{storageId}}[/left]
-[left]**门店：**{{storeName}}[/left]
-[left]会员编号：{{memberId}}[/left]
-
----
-[center]*[条形码占位]*[/center]
-[center]{{barcode}}[/center]
----
-
-[left]兑换时间：{{operationTime}}[/left]
-[left]**兑换彩票：**<large>{{numberTickets}}</large> 张[/left]
-
-===
-[left]<small>打印时间：{{printTime}}</small>[/left]
-[left]<small>操作员：{{operatorName}}</small>[/left]
-[left]<small>地址：{{storeAddress}}</small>[/left]
-[left]<small>电话：{{telephone}}</small>[/left]
-===
-
-[center]*兑换成功！*[/center]
-[center]**祝您游玩愉快！**[/center]
-
-[center]===[/center]
+[center]<xl>**HOLOX超乐城**</xl>[/center]
+[left]存币单号：{{storageId}}[/left]
+[left]============================[/left]
+[left]{{storeName}}[/left]
+[left]商品                  单价  数量  价格[/left]
+[left]----------------------------[/left]
+{{#products}}
+[left]{{name}}  {{unitPrice}}  {{quantity}}  {{totalPrice}}[/left]
+{{/products}}
+[left]----------------------------[/left]
+[left]小计：{{subtotal}}[/left]
+[left]优惠彩票：-{{discount}}[/left]
+[left]应收彩票：{{totalAmount}}[/left]
+[left]实收彩票：{{paidAmount}}[/left]
+[left]剩余彩票：{{remainingTickets}}[/left]
+[left]============================[/left]
+[left]打印时间：{{printTime}}[/left]
+[left]操作员：{{operatorName}}[/left]
+[left]地址：{{storeAddress}}[/left]
+[left]电话：{{telephone}}[/left]
+[left]----------------------------[/left]
+[left]请当面点清所有商品[/left]
+[left]如有质量问题请在30天内凭小票换货（无退款）[/left]
+[center]============================[/center]
+[center]**谢谢惠顾！欢迎下次光临！**[/center]
 ''';
   }
 
