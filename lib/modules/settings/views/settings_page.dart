@@ -16,6 +16,7 @@ import 'qr_scanner_config_view.dart';
 import 'card_registration_view.dart';
 import 'game_card_management_view.dart';
 import 'receipt_settings_view.dart';
+import 'receipt_config_page.dart';
 import '../../../data/models/receipt_editor_config.dart';
 
 class SettingsPage extends GetView<SettingsController> {
@@ -48,19 +49,9 @@ class SettingsPage extends GetView<SettingsController> {
         icon: Icons.network_check,
       ),
       const MenuItem(
-        key: 'receipt_settings',
-        label: '托管小票',
-        icon: Icons.receipt,
-      ),
-      const MenuItem(
-        key: 'payment_receipt',
-        label: '支付小票',
-        icon: Icons.payment,
-      ),
-      const MenuItem(
-        key: 'exchange_receipt',
-        label: '礼品小票',
-        icon: Icons.card_giftcard,
+        key: 'receipt_config',
+        label: '小票配置',
+        icon: Icons.receipt_long,
       ),
       const MenuItem(
         key: 'card_registration',
@@ -98,18 +89,8 @@ class SettingsPage extends GetView<SettingsController> {
       case 'network_detection':
         _ensureNetworkCheckController();
         return const NetworkCheckWidget();
-      case 'receipt_settings':
-        return const ReceiptSettingsView(
-          config: ReceiptEditorConfig.custody,
-        );
-      case 'payment_receipt':
-        return const ReceiptSettingsView(
-          config: ReceiptEditorConfig.payment,
-        );
-      case 'exchange_receipt':
-        return const ReceiptSettingsView(
-          config: ReceiptEditorConfig.exchange,
-        );
+      case 'receipt_config':
+        return const ReceiptConfigPage();
       case 'card_registration':
         return const CardRegistrationView();
       case 'game_card_management':

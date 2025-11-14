@@ -117,7 +117,7 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
       color: Colors.white,
       child: Row(
         children: [
-          Expanded(flex: 74, child: _buildEditorSection()),
+          Expanded(flex: 74, child: _buildEditorSectionWithoutHeader()),
           Expanded(
             flex: 26,
             child: Container(
@@ -188,6 +188,45 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
           ),
         ),
       ],
+    );
+  }
+
+  /// 无标题栏的编辑器区域（用于Tab页面）
+  Widget _buildEditorSectionWithoutHeader() {
+    return Obx(
+      () => Row(
+        key: _editorRowKey,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 左侧：标签使用指南（独立滚动）
+          Expanded(
+            flex: _leftPanelFlex.value,
+            child: Container(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(AppTheme.spacingL),
+                child: _buildPlaceholderGuide(),
+              ),
+            ),
+          ),
+          // 可拖拽的分隔条
+          _buildDraggableDivider(),
+          // 右侧：模板编辑器（独立滚动）
+          Expanded(
+            flex: 100 - _leftPanelFlex.value,
+            child: Container(
+              padding: EdgeInsets.all(AppTheme.spacingL),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: _buildTemplateEditor()),
+                  SizedBox(height: 24.h),
+                  Center(child: _buildActionButtons()),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
