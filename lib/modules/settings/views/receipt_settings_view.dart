@@ -117,7 +117,28 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
       color: Colors.white,
       child: Row(
         children: [
-          Expanded(flex: 74, child: _buildEditorSectionWithoutHeader()),
+          // 左侧大列：标题+Tab按钮 + 编辑区（74%）
+          Expanded(
+            flex: 74,
+            child: Column(
+              children: [
+                // 顶部：标题+描述（左） + Tab按钮（右）
+                Container(
+                  padding: EdgeInsets.all(AppTheme.spacingXL),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      bottom: BorderSide(color: _borderColor, width: 1.w),
+                    ),
+                  ),
+                  child: _buildHeader(),
+                ),
+                // 内容区：占位符指南 + 模板编辑器
+                Expanded(child: _buildEditorContent()),
+              ],
+            ),
+          ),
+          // 右侧列：预览区域（26%，全高度）
           Expanded(
             flex: 26,
             child: Container(
@@ -135,64 +156,8 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
     );
   }
 
-  Widget _buildEditorSection() {
-    return Column(
-      children: [
-        // 固定顶部：标题和类型选择器
-        Container(
-          padding: EdgeInsets.all(AppTheme.spacingXL),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              bottom: BorderSide(color: _borderColor, width: 1.w),
-            ),
-          ),
-          child: _buildHeader(),
-        ),
-        // 可滚动内容区域：分为上下两部分
-        Expanded(
-          child: Obx(
-            () => Row(
-              key: _editorRowKey,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 左侧：标签使用指南（独立滚动）
-                Expanded(
-                  flex: _leftPanelFlex.value,
-                  child: Container(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.all(AppTheme.spacingL),
-                      child: _buildPlaceholderGuide(),
-                    ),
-                  ),
-                ),
-                // 可拖拽的分隔条
-                _buildDraggableDivider(),
-                // 右侧：模板编辑器（独立滚动）
-                Expanded(
-                  flex: 100 - _leftPanelFlex.value,
-                  child: Container(
-                    padding: EdgeInsets.all(AppTheme.spacingL),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: _buildTemplateEditor()),
-                        SizedBox(height: 24.h),
-                        Center(child: _buildActionButtons()),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// 无标题栏的编辑器区域（用于Tab页面）
-  Widget _buildEditorSectionWithoutHeader() {
+  /// 编辑器区域（占位符指南 + 模板编辑器）
+  Widget _buildEditorContent() {
     return Obx(
       () => Row(
         key: _editorRowKey,
@@ -230,9 +195,82 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
     );
   }
 
+  /// 单个Tab按钮
+  Widget _buildTabButton(ReceiptTemplateType type, bool isSelected) {
+    return GestureDetector(
+      onTap: () async {
+        if (_hasUnsavedChanges.value) {
+          final shouldSwitch = await _showUnsavedChangesDialog();
+          if (shouldSwitch != true) return;
+        }
+        _selectedType.value = type;
+        await _loadTemplate();
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: 8.w, top: 8.h, bottom: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          color: isSelected ? null : const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(8.r),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppTheme.primaryColor.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _getTypeIcon(type),
+              size: 18.sp,
+              color: isSelected ? Colors.white : _textSecondary,
+            ),
+            SizedBox(width: 8.w),
+            Text(
+              type.displayName,
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? Colors.white : _textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 获取小票类型图标
+  IconData _getTypeIcon(ReceiptTemplateType type) {
+    switch (type) {
+      case ReceiptTemplateType.custody:
+        return Icons.inventory_2_outlined;
+      case ReceiptTemplateType.payment:
+        return Icons.payment_outlined;
+      case ReceiptTemplateType.exchange:
+        return Icons.swap_horiz_outlined;
+    }
+  }
+
   Widget _buildHeader() {
     return Row(
       children: [
+        // 左侧：标题 + 描述
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -252,85 +290,25 @@ class _ReceiptSettingsViewState extends State<ReceiptSettingsView> {
           ],
         ),
         const Spacer(),
-        _buildTypeSelector(),
+        // 右侧：Tab按钮
+        _buildReceiptTypeTabs(),
       ],
     );
   }
 
-  Widget _buildTypeSelector() {
+  /// 小票类型Tab按钮组（水平排列）
+  Widget _buildReceiptTypeTabs() {
     return Obx(
-      () => Container(
-        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: ReceiptTemplateType.values.map((type) {
-            final isSelected = _selectedType.value == type;
-
-            return GestureDetector(
-              onTap: () async {
-                if (_hasUnsavedChanges.value) {
-                  final shouldSwitch = await _showUnsavedChangesDialog();
-                  if (shouldSwitch != true) return;
-                }
-                _selectedType.value = type;
-                await _loadTemplate();
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                margin: EdgeInsets.only(right: 4.w),
-                decoration: BoxDecoration(
-                  gradient: isSelected
-                      ? LinearGradient(
-                          colors: [
-                            AppTheme.primaryColor,
-                            AppTheme.primaryColor.withOpacity(0.9),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        )
-                      : null,
-                  color: isSelected ? null : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10.r),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: AppTheme.primaryColor.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Text(
-                  type.displayName,
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? Colors.white : _textSecondary,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
+      () => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: ReceiptTemplateType.values.map((type) {
+          final isSelected = _selectedType.value == type;
+          return _buildTabButton(type, isSelected);
+        }).toList(),
       ),
     );
   }
+
 
   Widget _buildPlaceholderGuide() {
     return Container(
